@@ -5,28 +5,40 @@ import requests
 import json
 #from pprint import *
 
+class Player:
+    def __init__(self, name):
+        self.name = name
+        self.uuid = self.getUUID(self.name)
+        self.displayName = self.getNameFromUUID(self.uuid)
+
+    def getUUID(self, username):
+        r = requests.get(f'https://api.mojang.com/users/profiles/minecraft/{username}')
+        data = r.json()
+        return data['id']
+
+    def getNameFromUUID(self, uuid):
+        r = requests.get(f"https://sessionserver.mojang.com/session/minecraft/profile/{uuid}")
+        data = r.json()
+        return data['name']
+
+    def getUsrProfInfo(self, api_key):
+        r = requests.get(f"https://api.hypixel.net/player?key={api_key}&uuid={self.uuid}")
+        data = r.json()
+        return data['player']['stats']['SkyBlock']['profiles']
+
+    def printProfileList(self, profile_list):
+        print(f'{self.displayName}\'s profiles:')
+        for i, profile in enumerate(profile_list):
+            print(f"{i + 1}: {profile['cute_name']}")
+
+
 # Setup functions
-
-def getUsrProfInfo(uuid, api_key): # Get the profile information of the specified user
-    r = requests.get(f"https://api.hypixel.net/player?key={api_key}&uuid={uuid}")
-    data = r.json()
-    return data['player']['stats']['SkyBlock']['profiles'] # Decode 'r' and return it in dictionary format
-
-def getUUID(username):
-    r = requests.get(f'https://api.mojang.com/users/profiles/minecraft/{username}')
-    data = r.json()
-    return data['id']
-
-def getNameFromUUID(uuid):
-    r = requests.get(f"https://sessionserver.mojang.com/session/minecraft/profile/{uuid}")
-    data = r.json()
-    return data['name']
-
 
 def getProfileData(profile_id, api_key):
     r = requests.get(f'https://api.hypixel.net/skyblock/profile?key={api_key}&profile={profile_id}')
     data = r.json()
     return data['profile']
+
 
 def getSkillLevel(skill_xp, max_skill_level):
     skill_level = 0
@@ -38,6 +50,7 @@ def getSkillLevel(skill_xp, max_skill_level):
             skill_level = max_skill_level
     return skill_level
 
+
 def calculateSkillProgress(level, xp, cap, farming = "n"):
     if level != cap:
         total_for_next_level = level_boundaries[level + 1] - level_boundaries[level]
@@ -48,6 +61,7 @@ def calculateSkillProgress(level, xp, cap, farming = "n"):
     else:
         prog_display = 'Max Level Reached'
     return prog_display
+
 
 def formatNumber(number):
     digits = len(str(number))
@@ -63,6 +77,7 @@ def formatNumber(number):
         display = f'{number}'
     return display
 
+
 def setSkillExp(skill):
     exp = 0
     try:
@@ -71,10 +86,12 @@ def setSkillExp(skill):
         pass
     return exp
 
+
 def remove0FromFloat(number):
     if str(number).endswith('.0'):
         number = int(number)
     return number
+
 
 def getSlayerStats(slayer):
     claimed_levels = usr_prof_data["slayer_bosses"][slayer]["claimed_levels"]
@@ -87,16 +104,19 @@ def getSlayerStats(slayer):
             pass
     return slayer_level
 
+
 def calculateSKillAvg():
     total_skill_level = alchemy_level + carpentry_level + combat_level + enchanting_level + farming_level + fishing_level + foraging_level + mining_level + taming_level
     skill_average = (round((total_skill_level / 9) * 100)) / 100
     return skill_average
+
 
 def getApiKey(config):
     f = open(config)
     data = json.load(f)
     api_key = data['api_key']
     return api_key
+
 
 # Import API key and level boundaries
 
@@ -105,22 +125,13 @@ level_boundaries = [0, 50, 175, 375, 675, 1175, 1925, 2925, 4425, 6425, 9925, 14
 
 # Get target username and find the UUID of it
 
-target_player = input("Enter your Minecraft Username: ")
-print("Fetching profile list.", end='')
-target_uuid = getUUID(target_player)
+target = Player(input("Enter a Minecraft Username: "))
+target_uuid = target.uuid
+player_name = target.name
 
-player_name = getNameFromUUID(target_uuid)
-
-# Get list of profiles and their IDs
-
-profiles = getUsrProfInfo(target_uuid, api_key)
-print(".", end='')
+profiles = target.getUsrProfInfo(api_key)
 profile_list = [profile for profile in profiles.values()]
-print(".")
-
-# Print list of profiles to choose from
-for i, profile in enumerate(profile_list):
-    print(f"{i + 1}: {profile['cute_name']}")
+target.printProfileList(profile_list)
 
 # Get the user's selection
 
@@ -180,7 +191,7 @@ blaze_slayer = getSlayerStats("blaze")
 #pprint(usr_prof_data)
 
 print(f'''
-                        {player_name}'s Stats on {chosen_profile_cute}
+                        {target.displayName}'s Stats on {chosen_profile_cute}
 
                             Skills ({skill_average} average):
 
