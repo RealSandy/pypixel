@@ -105,7 +105,7 @@ level_boundaries = [0, 50, 175, 375, 675, 1175, 1925, 2925, 4425, 6425, 9925, 14
 
 # Get target username and find the UUID of it
 
-target_player = input("Enter your Minecraft Username: ")
+target_player = input("Enter a Minecraft Username: ")
 print("Fetching profile list.", end='')
 target_uuid = getUUID(target_player)
 
