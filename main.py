@@ -1,5 +1,5 @@
 
-#PyPixel! A project similar to SkyCrypt!
+# PyPixel! A project by RealSandy!
 
 from pypixel_functions import *
 
