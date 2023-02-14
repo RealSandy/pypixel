@@ -12,6 +12,7 @@ class Player:
         self.uuid = self.getUUID(self.name)
         self.displayName = self.getNameFromUUID(self.uuid)
         self.api_key = getApiKey('config.json')
+        clearScreen()
 
     def getUUID(self, username):
         r = requests.get(f'https://api.mojang.com/users/profiles/minecraft/{username}')
