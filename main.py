@@ -8,12 +8,6 @@ from pypixel_functions import *
 startupScreen('start_screen')
 
 target = Player(input("Enter a Minecraft Username: "))
-target_uuid = target.uuid
-player_name = target.name
-
-profiles = target.getUsrProfInfo()
-profile_list = [profile for profile in profiles.values()]
-target.getProfileSelection(profile_list)
 
 alch = Skill(target, 'alchemy', 50)
 carp = Skill(target, 'carpentry', 50)
