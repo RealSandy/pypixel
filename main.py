@@ -40,6 +40,7 @@ class Player:
         data = r.json()
         return data['profile']
 
+
 class Skill:
     def __init__(self, name, cap=0):
         self.name = name
@@ -92,6 +93,25 @@ class Skill:
         return f"{self.lvl} ({self.prog})"
 
 
+class Slayer:
+    def __init__(self, mob_type, name):
+        self.type = mob_type
+        self.name = name
+        self.dat = target.prof_data["slayer_bosses"][self.type]
+        self.getSlayerLevel()
+
+    def getSlayerLevel(self):
+        claimed_levels = self.dat["claimed_levels"]
+        slayer_level = 0
+        for i in range(1, 9):
+            try:
+                if claimed_levels[f"level_{i}"]:
+                    slayer_level = i
+            except KeyError:
+                pass
+        self.lvl = slayer_level
+
+
 # Setup functions
 
 def formatNumber(number):
@@ -113,18 +133,6 @@ def remove0FromFloat(number):
     if str(number).endswith('.0'):
         number = int(number)
     return number
-
-
-def getSlayerStats(slayer):
-    claimed_levels = target.prof_data["slayer_bosses"][slayer]["claimed_levels"]
-    slayer_level = 0
-    for i in range(1, 9):
-        try:
-            if claimed_levels[f"level_{i}"]:
-                slayer_level = i
-        except KeyError:
-            pass
-    return slayer_level
 
 
 def calculateSkillAvg():
@@ -167,11 +175,11 @@ tame = Skill('taming', 50)
 
 skill_average = calculateSkillAvg()
 
-rev_slayer = getSlayerStats("zombie")
-tara_slayer = getSlayerStats("spider")
-sven_slayer = getSlayerStats("wolf")
-eman_slayer = getSlayerStats("enderman")
-blaze_slayer = getSlayerStats("blaze")
+rev = Slayer('zombie', 'Revenant Horror')
+tara = Slayer('spider', 'Tarantula Broodfather')
+sven = Slayer('wolf', 'Sven Packmaster')
+eman = Slayer('enderman', 'Voidgloom Seraph')
+blaze = Slayer('blaze', 'Inferno Demonlord')
 
 #pprint(usr_prof_data)
 
@@ -184,5 +192,5 @@ Taming {tame}    Farming {farm}    Mining {mine}
 Combat {combat}    Foraging {forage}    Fishing {fish}
 Enchanting {ench}    Alchemy {alch}    Carpentry {carp}
 
-                            Slayers ({rev_slayer}/{tara_slayer}/{sven_slayer}/{eman_slayer}/{blaze_slayer}):
+                            Slayers ({rev.lvl}/{tara.lvl}/{sven.lvl}/{eman.lvl}/{blaze.lvl}):
 INDIVIDUAL SLAYER STATS SUCH AS TIER KILLS, LEVEL PROGRESS AND TOTAL XP COMING SOON''')
