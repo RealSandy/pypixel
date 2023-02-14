@@ -4,6 +4,8 @@ import time
 import requests
 import json
 
+skill_levels = []
+
 
 class Player:
     def __init__(self, name=None):
@@ -54,6 +56,7 @@ class Skill:
         self.xp = self.setSkillXp()
         self.lvl = self.getLevel()
         self.prog = self.calculateSkillProgress()
+        skill_levels.append(self.lvl)
 
     def setCap(self, cap):
         if self.name == 'farming':
@@ -142,10 +145,11 @@ def remove0FromFloat(number):
     return number
 
 
-def calculateSkillAvg(skill1, skill2, skill3, skill4, skill5, skill6, skill7, skill8, skill9):
-    total_skill_level = skill1.lvl + skill2.lvl + skill3.lvl + skill4.lvl + skill5.lvl + skill6.lvl + skill7.lvl + \
-                        skill8.lvl + skill9.lvl
-    skill_average = (round((total_skill_level / 9) * 100)) / 100
+def calculateSkillAvg():
+    skill_total = 0
+    for i in range(len(skill_levels)):
+        skill_total += skill_levels[i]
+    skill_average = (round((skill_total / 9) * 100)) / 100
     return skill_average
 
 

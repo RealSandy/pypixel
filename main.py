@@ -19,7 +19,7 @@ forage = Skill(target, 'foraging', 50)
 mine = Skill(target, 'mining', 60)
 tame = Skill(target, 'taming', 50)
 
-skill_average = calculateSkillAvg(alch, carp, combat, ench, farm, fish, forage, mine, tame)
+skill_average = calculateSkillAvg()
 
 rev = Slayer('zombie', 'Revenant Horror', target)
 tara = Slayer('spider', 'Tarantula Broodfather', target)
