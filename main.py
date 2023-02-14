@@ -3,10 +3,11 @@
 
 from pypixel_functions import *
 
-# Get target username and find the UUID of it
+# Print the startup screen
 
-target_name = input("Enter a Minecraft Username: ")
-target = Player(target_name)
+startupScreen('start_screen')
+
+target = Player(input("Enter a Minecraft Username: "))
 target_uuid = target.uuid
 player_name = target.name
 
@@ -31,6 +32,8 @@ tara = Slayer('spider', 'Tarantula Broodfather', target)
 sven = Slayer('wolf', 'Sven Packmaster', target)
 eman = Slayer('enderman', 'Voidgloom Seraph', target)
 blaze = Slayer('blaze', 'Inferno Demonlord', target)
+
+clearScreen()
 
 print(f'''
                         {target.displayName}'s Stats on {target.chosen_profile_cute}

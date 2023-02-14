@@ -1,4 +1,6 @@
 
+import os
+import time
 import requests
 import json
 
@@ -150,3 +152,14 @@ def getApiKey(config):
     data = json.load(f)
     api_key = data['api_key']
     return api_key
+
+def clearScreen():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def startupScreen(screen):
+    clearScreen()
+    start_screen = open(screen)
+    for lines in start_screen:
+        print(lines, end='')
+    time.sleep(2.5)
+    clearScreen()
