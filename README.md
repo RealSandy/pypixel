@@ -17,3 +17,5 @@ API keys can be obtained by logging into the Hypixel server and running the comm
 4. Save the file as 'config.json'
 
 5. Open main.py and run it!
+
+MAKE SURE YOU HAVE THE 'requests' PACKAGE INSTALLED
