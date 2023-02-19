@@ -168,8 +168,7 @@ class Slayer:
     def get_level_progress(self):
         level_boundaries = self.bounds
         if self.lvl != 9:
-            amount_to_next_level = level_boundaries[self.lvl] - self.xp
-            prog_display = f'{format_number(amount_to_next_level)}/{format_number(level_boundaries[self.lvl])}'
+            prog_display = f'{format_number(self.xp)}/{format_number(level_boundaries[self.lvl])}'
         else:
             prog_display = 'Max Level Reached'
         level_display = f'{self.name} {self.lvl} ({prog_display})'
