@@ -28,7 +28,6 @@ eman = Slayer('enderman', 'Voidgloom Seraph', target)
 blaze = Slayer('blaze', 'Inferno Demonlord', target)
 
 clearScreen()
-
 print(f'''
                         {target.displayName}'s Stats on {target.chosen_profile_cute}
 
@@ -40,3 +39,5 @@ Enchanting {ench}    Alchemy {alch}    Carpentry {carp}
 
                             Slayers ({rev.lvl}/{tara.lvl}/{sven.lvl}/{eman.lvl}/{blaze.lvl}):
 INDIVIDUAL SLAYER STATS SUCH AS TIER KILLS, LEVEL PROGRESS AND TOTAL XP COMING SOON''')
+
+print(rev.dat)

@@ -12,31 +12,31 @@ class Player:
         if not name:
             raise RuntimeError('You need to provide a name')
         self.name = name
-        self.uuid = getUUID(self.name)
-        self.displayName = getNameFromUUID(self.uuid)
-        self.api_key = getApiKey('config.json')
-        self.profiles = self.getUsrProfInfo()
+        self.uuid = get_uuid_from_name(self.name)
+        self.displayName = get_name_from_uuid(self.uuid)
+        self.api_key = get_api_key('config.json')
+        self.profiles = self.get_usr_prof_info()
         self.profiles_list = [profile for profile in self.profiles.values()]
-        self.chosen_profile_cute, self.prof_data = self.getProfileSelection(self.profiles_list)
-        clearScreen()
+        self.chosen_profile_cute, self.prof_data = self.get_profile_selection(self.profiles_list)
+        clear_screen()
 
-    def getUsrProfInfo(self):
+    def get_usr_prof_info(self):
         r = requests.get(f"https://api.hypixel.net/player?key={self.api_key}&uuid={self.uuid}")
         data = r.json()
         return data['player']['stats']['SkyBlock']['profiles']
 
-    def getProfileSelection(self, profile_list):
+    def get_profile_selection(self, profile_list):
         print(f'{self.displayName}\'s profiles:')
         for i, profile in enumerate(profile_list):
             print(f"{i + 1}: {profile['cute_name']}")
         prof_index = input("Select profile: ")
         chosen_profile = profile_list[int(prof_index) - 1]['profile_id']
         prof_cute_name = profile_list[int(prof_index) - 1]["cute_name"]
-        prof_data = self.getProfileData(chosen_profile)
+        prof_data = self.get_profile_data(chosen_profile)
         prof_data = prof_data['members'][str(self.uuid)]
         return prof_cute_name, prof_data
 
-    def getProfileData(self, profile_id):
+    def get_profile_data(self, profile_id):
         r = requests.get(f'https://api.hypixel.net/skyblock/profile?key={self.api_key}&profile={profile_id}')
         data = r.json()
         return data['profile']
@@ -52,13 +52,13 @@ class Skill:
                            74172425, 79672425, 85472425, 91572425, 97972425, 104672425, 111672425)
         self.name = name
         self.target = target
-        self.cap = self.setCap(cap)
-        self.xp = self.setSkillXp()
-        self.lvl = self.getLevel()
-        self.prog = self.calculateSkillProgress()
+        self.cap = self.set_cap(cap)
+        self.xp = self.set_skill_xp()
+        self.lvl = self.get_level()
+        self.prog = self.calculate_skill_progress()
         skill_levels.append(self.lvl)
 
-    def setCap(self, cap):
+    def set_cap(self, cap):
         if self.name == 'farming':
             farming_lvl_cap_upgrades = 0
             try:
@@ -69,7 +69,7 @@ class Skill:
         else:
             return cap
 
-    def setSkillXp(self):
+    def set_skill_xp(self):
         xp = 0
         try:
             xp = round(self.target.prof_data[f'experience_skill_{self.name}'])
@@ -77,7 +77,7 @@ class Skill:
             pass
         return xp
 
-    def getLevel(self):
+    def get_level(self):
         skill_level = 0
         for i in range(1, self.cap):
             if self.xp < self.lvl_bounds[i]:
@@ -87,12 +87,12 @@ class Skill:
                 skill_level = self.cap
         return skill_level
 
-    def calculateSkillProgress(self):
+    def calculate_skill_progress(self):
         level_boundaries = self.lvl_bounds
         if self.lvl != self.cap:
             total_for_next_level = level_boundaries[self.lvl + 1] - level_boundaries[self.lvl]
             amount_to_next_level = self.xp - level_boundaries[self.lvl]
-            prog_display = f'{formatNumber(amount_to_next_level)}/{formatNumber(total_for_next_level)}'
+            prog_display = f'{format_number(amount_to_next_level)}/{format_number(total_for_next_level)}'
         elif self.name == 'farming' and self.cap != 60:
             prog_display = "You cannot level any further until you upgrade your cap!"
         else:
@@ -108,44 +108,61 @@ class Slayer:
         self.type = mob_type
         self.name = name
         self.dat = target.prof_data["slayer_bosses"][self.type]
-        self.lvl = self.getSlayerLevel()
+        self.xp = self.set_xp()
+        self.bounds = self.set_bounds()
+        self.lvl = self.get_level()
 
-    def getSlayerLevel(self):
-        claimed_levels = self.dat["claimed_levels"]
+    def get_level(self):
         slayer_level = 0
         for i in range(1, 9):
-            try:
-                if claimed_levels[f"level_{i}"]:
-                    slayer_level = i
-            except KeyError:
-                pass
+            if self.xp < self.bounds[i]:
+                slayer_level = i - 1
+                break
+            elif self.xp >= self.bounds[8]:
+                slayer_level = 9
         return slayer_level
+
+    def set_xp(self):
+        xp = 0
+        try:
+            xp = self.dat['xp']
+        except KeyError:
+            pass
+        return xp
+
+    def set_bounds(self):
+        bounds = {'zombie': [5, 15, 200, 1000, 5000, 20000, 100000, 400000, 1000000],
+                  'spider': [10, 25, 200, 1000, 5000, 20000, 100000, 400000, 1000000],
+                  'wolf': [10, 30, 250, 1500, 5000, 20000, 100000, 400000, 1000000],
+                  'enderman': [10, 30, 250, 1500, 5000, 20000, 100000, 400000, 1000000],
+                  'blaze': [10, 30, 250, 1500, 5000, 20000, 100000, 400000, 1000000]}
+        return bounds[self.type]
 
 
 # Setup functions
 
-def formatNumber(number):
+def format_number(number):
     digits = len(str(number))
     if digits >= 7:
         number = round(number / 100000) / 10
-        number = remove0FromFloat(number)
+        number = remove_float_trail(number)
         display = f'{number}M'
     elif 6 >= digits >= 4:
         number = round(number / 100) / 10
-        number = remove0FromFloat(number)
+        number = remove_float_trail(number)
         display = f'{number}k'
     else:
         display = f'{number}'
     return display
 
 
-def remove0FromFloat(number):
+def remove_float_trail(number):
     if str(number).endswith('.0'):
         number = int(number)
     return number
 
 
-def calculateSkillAvg():
+def calculate_skill_avg():
     skill_total = 0
     for i in range(len(skill_levels)):
         skill_total += skill_levels[i]
@@ -153,33 +170,33 @@ def calculateSkillAvg():
     return skill_average
 
 
-def getApiKey(config):
+def get_api_key(config):
     f = open(config)
     data = json.load(f)
     api_key = data['api_key']
     return api_key
 
 
-def clearScreen():
+def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
-def startupScreen(screen):
-    clearScreen()
+def startup_screen(screen):
+    clear_screen()
     start_screen = open(screen)
     for lines in start_screen:
         print(lines, end='')
     time.sleep(2.5)
-    clearScreen()
+    clear_screen()
 
 
-def getUUID(username):
+def get_uuid_from_name(username):
     r = requests.get(f'https://api.mojang.com/users/profiles/minecraft/{username}')
     data = r.json()
     return data['id']
 
 
-def getNameFromUUID(uuid):
+def get_name_from_uuid(uuid):
     r = requests.get(f"https://sessionserver.mojang.com/session/minecraft/profile/{uuid}")
     data = r.json()
     return data['name']
