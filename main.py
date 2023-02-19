@@ -5,7 +5,7 @@ from pypixel_functions import *
 
 # Print the startup screen
 
-startupScreen('start_screen')
+startup_screen('start_screen')
 
 target = Player(input("Enter a Minecraft Username: "))
 
@@ -19,7 +19,7 @@ forage = Skill(target, 'foraging', 50)
 mine = Skill(target, 'mining', 60)
 tame = Skill(target, 'taming', 50)
 
-skill_average = calculateSkillAvg()
+skill_average = calculate_skill_avg()
 
 rev = Slayer('zombie', 'Revenant Horror', target)
 tara = Slayer('spider', 'Tarantula Broodfather', target)
@@ -27,7 +27,7 @@ sven = Slayer('wolf', 'Sven Packmaster', target)
 eman = Slayer('enderman', 'Voidgloom Seraph', target)
 blaze = Slayer('blaze', 'Inferno Demonlord', target)
 
-clearScreen()
+clear_screen()
 print(f'''
                         {target.displayName}'s Stats on {target.chosen_profile_cute}
 
