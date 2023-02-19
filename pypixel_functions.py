@@ -100,7 +100,7 @@ class Skill:
         return prog_display
 
     def __str__(self):
-        return f"{self.lvl} ({self.prog})"
+        return pad_string(f"{self.name.capitalize()} {self.lvl} ({self.prog})", 33)
 
 
 class Slayer:
@@ -110,7 +110,10 @@ class Slayer:
         self.dat = target.prof_data["slayer_bosses"][self.type]
         self.xp = self.set_xp()
         self.bounds = self.set_bounds()
+        self.max_tier = self.set_max_tier()
         self.lvl = self.get_level()
+        self.pad_length = self.get_pad_length()
+        self.kills_t1, self.kills_t2, self.kills_t3, self.kills_t4, self.kills_t5 = self.get_kills()
 
     def get_level(self):
         slayer_level = 0
@@ -137,6 +140,29 @@ class Slayer:
                   'enderman': [10, 30, 250, 1500, 5000, 20000, 100000, 400000, 1000000],
                   'blaze': [10, 30, 250, 1500, 5000, 20000, 100000, 400000, 1000000]}
         return bounds[self.type]
+
+    def set_max_tier(self):
+        max_tiers = {'zombie': 5, 'spider': 4, 'wolf': 4, 'enderman': 4, 'blaze': 4}
+        return max_tiers[self.type]
+
+    def get_kills(self):
+        name = self.type.capitalize()
+        kills = []
+        for i in range(5):
+            tier_kills = 0
+            try:
+                tier_kills = self.dat[f'boss_kills_tier_{i}']
+            except KeyError:
+                pass
+            kills.append(pad_string(f'{name} - x{tier_kills}', self.pad_length))
+        if self.max_tier != 5:
+            kills[4] = pad_string(f'{name} - N/A', self.pad_length)
+        return kills[0], kills[1], kills[2], kills[3], kills[4]
+
+    def get_pad_length(self):
+        type = self.type
+        pad_length = len(type) + 9
+        return pad_length
 
 
 # Setup functions
@@ -200,3 +226,9 @@ def get_name_from_uuid(uuid):
     r = requests.get(f"https://sessionserver.mojang.com/session/minecraft/profile/{uuid}")
     data = r.json()
     return data['name']
+
+
+def pad_string(string, target_length):
+    current_length = len(string)
+    spaces_to_add = target_length - current_length
+    return string + (' ' * spaces_to_add)

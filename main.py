@@ -33,11 +33,16 @@ print(f'''
 
                             Skills ({skill_average} average):
 
-Taming {tame}    Farming {farm}    Mining {mine}
-Combat {combat}    Foraging {forage}    Fishing {fish}
-Enchanting {ench}    Alchemy {alch}    Carpentry {carp}
+{tame}{farm}{mine}
+{combat}{forage}{fish}
+{ench}{alch}{carp}
 
                             Slayers ({rev.lvl}/{tara.lvl}/{sven.lvl}/{eman.lvl}/{blaze.lvl}):
-INDIVIDUAL SLAYER STATS SUCH AS TIER KILLS, LEVEL PROGRESS AND TOTAL XP COMING SOON''')
 
-print(rev.dat)
+Slayer Kills:
+    T1: {rev.kills_t1}{tara.kills_t1}{sven.kills_t1}{eman.kills_t1}{blaze.kills_t1}
+    T2: {rev.kills_t2}{tara.kills_t2}{sven.kills_t2}{eman.kills_t2}{blaze.kills_t2}
+    T3: {rev.kills_t3}{tara.kills_t3}{sven.kills_t3}{eman.kills_t3}{blaze.kills_t3}
+    T4: {rev.kills_t4}{tara.kills_t4}{sven.kills_t4}{eman.kills_t4}{blaze.kills_t4}
+    T5: {rev.kills_t5}{tara.kills_t5}{sven.kills_t5}{eman.kills_t5}{blaze.kills_t5}
+''')
