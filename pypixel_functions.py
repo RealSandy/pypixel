@@ -114,6 +114,7 @@ class Slayer:
         self.lvl = self.get_level()
         self.pad_length = self.get_pad_length()
         self.kills_t1, self.kills_t2, self.kills_t3, self.kills_t4, self.kills_t5 = self.get_kills()
+        self.tier = self.get_level_progress()
 
     def get_level(self):
         slayer_level = 0
@@ -163,6 +164,16 @@ class Slayer:
         type = self.type
         pad_length = len(type) + 9
         return pad_length
+
+    def get_level_progress(self):
+        level_boundaries = self.bounds
+        if self.lvl != 9:
+            amount_to_next_level = level_boundaries[self.lvl] - self.xp
+            prog_display = f'{format_number(amount_to_next_level)}/{format_number(self.xp)}'
+        else:
+            prog_display = 'Max Level Reached'
+        level_display = f'{self.name} {self.lvl} ({prog_display})'
+        return level_display
 
 
 # Setup functions
