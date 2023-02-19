@@ -100,7 +100,7 @@ class Skill:
         return prog_display
 
     def __str__(self):
-        return pad_string(f"{self.name.capitalize()} {self.lvl} ({self.prog})", 33)
+        return pad_string(f"{self.name.capitalize()} {self.lvl} ({self.prog})", 34)
 
 
 class Slayer:
