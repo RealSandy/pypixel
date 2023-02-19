@@ -116,7 +116,7 @@ class Slayer:
         slayer_level = 0
         for i in range(1, 9):
             if self.xp < self.bounds[i]:
-                slayer_level = i - 1
+                slayer_level = i
                 break
             elif self.xp >= self.bounds[8]:
                 slayer_level = 9
