@@ -179,8 +179,9 @@ class Slayer:
             prog_display = f'{format_number(self.xp)}/{format_number(level_boundaries[self.lvl])}'
         else:
             prog_display = 'Max Level Reached'
-        level_display = f'{self.name} {self.lvl} ({prog_display}) - T{self.highest_killed} x{self.kills_to_next}' \
-                        f' to next level'
+        level_display = pad_string(f'{self.name} {self.lvl}', 24)
+        level_display += pad_string(f'({prog_display})', 14)
+        level_display += f'- T{self.highest_killed} x{self.kills_to_next} to next level'
         return level_display
 
     def get_highest_kill(self):
