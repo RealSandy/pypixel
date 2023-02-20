@@ -3,6 +3,7 @@ import os
 import time
 import requests
 import json
+from math import *
 
 skill_levels = []
 
@@ -105,6 +106,7 @@ class Skill:
 
 class Slayer:
     def __init__(self, mob_type, name, target):
+        self.boss_xp = [0, 5, 25, 100, 500, 1500]
         self.type = mob_type
         self.name = name
         self.dat = target.prof_data["slayer_bosses"][self.type]
@@ -113,7 +115,10 @@ class Slayer:
         self.max_tier = self.set_max_tier()
         self.lvl = self.get_level()
         self.pad_length = self.get_pad_length()
-        self.kills_t1, self.kills_t2, self.kills_t3, self.kills_t4, self.kills_t5 = self.get_kills()
+        self.kills_t1, self.kills_t2, self.kills_t3, self.kills_t4, self.kills_t5, self.t1, self.t2, self.t3, self.t4, \
+            self.t5 = self.get_kills()
+        self.highest_killed = self.get_highest_kill()
+        self.kills_to_next = self.get_kills_to_next()
         self.tier = self.get_level_progress()
 
     def get_level(self):
@@ -149,6 +154,7 @@ class Slayer:
     def get_kills(self):
         name = self.type.capitalize()
         kills = []
+        kills_raw = []
         for i in range(5):
             tier_kills = 0
             try:
@@ -156,13 +162,15 @@ class Slayer:
             except KeyError:
                 pass
             kills.append(pad_string(f'{name} - x{tier_kills}', self.pad_length))
+            kills_raw.append(tier_kills)
         if self.max_tier != 5:
             kills[4] = pad_string(f'{name} - N/A', self.pad_length)
-        return kills[0], kills[1], kills[2], kills[3], kills[4]
+            kills_raw[4] = 'N/A'
+        return kills[0], kills[1], kills[2], kills[3], kills[4], kills_raw[0], kills_raw[1], kills_raw[2], \
+            kills_raw[3], kills_raw[4]
 
     def get_pad_length(self):
-        type = self.type
-        pad_length = len(type) + 9
+        pad_length = len(self.type) + 9
         return pad_length
 
     def get_level_progress(self):
@@ -171,8 +179,32 @@ class Slayer:
             prog_display = f'{format_number(self.xp)}/{format_number(level_boundaries[self.lvl])}'
         else:
             prog_display = 'Max Level Reached'
-        level_display = f'{self.name} {self.lvl} ({prog_display})'
+        level_display = f'{self.name} {self.lvl} ({prog_display}) - T{self.highest_killed} x{self.kills_to_next}' \
+                        f' to next level'
         return level_display
+
+    def get_highest_kill(self):
+        kills = [self.t1, self.t2, self.t3, self.t4, self.t5]
+        highest_killed = 0
+        for i in range(len(kills)):
+            if str(kills[i]) != 'N/A':
+                if int(kills[i]) < 1:
+                    highest_killed = i
+                    break
+                elif i == 4 and int(kills[i]) > 1:
+                    highest_killed = 5
+            else:
+                highest_killed = i
+        if highest_killed == 0:
+            highest_killed = 1
+        return highest_killed
+
+    def get_kills_to_next(self):
+        xp_to_next = self.bounds[self.lvl] - self.xp
+        xp_per_boss = self.boss_xp[self.highest_killed]
+        number_to_kill = xp_to_next / xp_per_boss
+        number_to_kill = ceil(number_to_kill)
+        return number_to_kill
 
 
 # Setup functions
