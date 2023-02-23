@@ -181,7 +181,8 @@ class Slayer:
             prog_display = 'Max Level Reached'
         level_display = pad_string(f'{self.name} {self.lvl}', 24)
         level_display += pad_string(f'({prog_display})', 14)
-        level_display += f'- T{self.highest_killed} x{self.kills_to_next} to next level'
+        if self.lvl != 9:
+            level_display += f'- T{self.highest_killed} x{self.kills_to_next} to next level'
         return level_display
 
     def get_highest_kill(self):
@@ -201,11 +202,12 @@ class Slayer:
         return highest_killed
 
     def get_kills_to_next(self):
-        xp_to_next = self.bounds[self.lvl] - self.xp
-        xp_per_boss = self.boss_xp[self.highest_killed]
-        number_to_kill = xp_to_next / xp_per_boss
-        number_to_kill = ceil(number_to_kill)
-        return number_to_kill
+        if self.lvl != 9:
+            xp_to_next = self.bounds[self.lvl] - self.xp
+            xp_per_boss = self.boss_xp[self.highest_killed]
+            number_to_kill = xp_to_next / xp_per_boss
+            number_to_kill = ceil(number_to_kill)
+            return number_to_kill
 
 
 # Setup functions
